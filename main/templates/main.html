@@ -1,0 +1,13 @@
+<h1>Sweet Tooth Candy Shop</h1>
+<h2>Satisfy Your Sweet Tooth, Indulge in Bliss!</h2>
+
+<ul>
+{% for candy in candies %}
+    <li>
+        <p><strong>Candy Type:</strong> {{ candy.name }}</p>
+        <p><strong>Description:</strong> {{ candy.description }}</p>
+        <p><strong>Price:</strong> {{ candy.price }}</p>
+        <p><strong>Sweetness:</strong> {{ candy.sweetness }}</p>
+    </li>
+{% endfor %}
+</ul>
