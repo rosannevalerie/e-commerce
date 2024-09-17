@@ -1,15 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <h1>Sweet Tooth Candy Shop</h1>
 <p><strong>Nama:</strong> Rosanne Valerie</p>
 <p><strong>Kelas:</strong> PBP E</p>
 <h2>Satisfy Your Sweet Tooth, Indulge in Bliss!</h2>
+<!-- <p>{{ default }}</p> -->
 
 <ul>
-{% for candy in candies %}
-    <li>
-        <p><strong>Candy Type:</strong> {{ candy.name }}</p>
-        <p><strong>Description:</strong> {{ candy.description }}</p>
-        <p><strong>Price:</strong> {{ candy.price }}</p>
-        <p><strong>Sweetness:</strong> {{ candy.sweetness }}</p>
-    </li>
+    {% for candy in candies %}
+        <li>
+            <p><strong>Candy Type:</strong> {{ candy.name }}</p>
+            <p><strong>Description:</strong> {{ candy.description }}</p>
+            <p><strong>Price:</strong> {{ candy.price }}</p>
+            <p><strong>Sweetness (1-10):</strong> {{ candy.sweetness }}</p>
+        </li>
 {% endfor %}
 </ul>
+
+<br/>
+
+<a href="{% url 'main:create_candy_entry' %}">
+  <button>Add NewCandy Entry</button>
+</a>
+
+{% endblock content %}
