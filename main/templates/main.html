@@ -1,33 +1,48 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Sweet Tooth Candy Shop</title>
+{% endblock meta %}
 
 {% block content %}
-<title>Sweet Tooth</title>
-<h1>Sweet Tooth Candy Shop</h1>
-<p><strong>Welcome! {{ user_name }}</strong></p>
-<h2>Satisfy Your Sweet Tooth, Indulge in Bliss!</h2>
-<!-- <p>{{ default }}</p> -->
+{% include 'navbar.html' %}
 
-<ul>
-    {% for candy in candies %}
-        <li>
-            <p><strong>Candy Type:</strong> {{ candy.name }}</p>
-            <p><strong>Description:</strong> {{ candy.description }}</p>
-            <p><strong>Price:</strong> {{ candy.price }}</p>
-            <p><strong>Sweetness (1-10):</strong> {{ candy.sweetness }}</p>
-        </li>
-{% endfor %}
-</ul>
+<div class="overflow-x-hidden px-4 md:px-8 py-8 min-h-screen bg-pink-50 flex flex-col">
+  
+  <div class="content mt-20">
+    <div class="p-2 mb-6 relative">
+      <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
+        {% include "card_info.html" with title='NPM' value=npm %}
+        {% include "card_info.html" with title='Name' value=nama %}
+        {% include "card_info.html" with title='Class' value=class %}
+      </div>
+    </div>
+  </div>
 
-<br/>
+  <h1 class="text-3xl text-center text-pink-700 font-extrabold mb-4">Satisfy Your Sweet Tooth, Indulge in Bliss!</h1>
 
-<a href="{% url 'main:create_candy_entry' %}">
-  <button>Add New Candy Entry</button>
-</a>
+  {% if not candies %}
+    <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLkmuBsz-n5XtJd3sUDjDO-2QbKWRxBdn1iw&s" alt="Sad face" class="w-32 h-32 mb-4"/>
+        <p class="text-center text-gray-600 mt-4">Belum ada permen.</p>
+    </div>
+  {% else %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for candy in candies %}
+            {% include 'card_candy.html' with candy_entry=candy %}
+        {% endfor %}
+    </div>
+  {% endif %}
+  
+  <div class="text-center mt-10">
+      <a href="{% url 'main:create_candy_entry' %}" class="bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300">
+          Add New Candy Entry
+      </a>
+  </div>
 
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-
-<h5>Sesi terakhir login: {{ last_login }}</h5>
+  <br>
+  <p class="text-center text-sm text-gray-500 mt-6">Last Login: {{ last_login }}</p>
+</div>
 
 {% endblock content %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!-- Container untuk form dengan padding atas yang cukup -->
+<div class="max-w-2xl mx-auto bg-white p-8 mt-24 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-pink-600 text-center">Edit Candy</h1>
+    
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Field untuk Name dengan value default -->
+        <div>
+            <label for="name" class="block text-sm font-medium text-pink-600 mb-1">Name:</label>
+            <input type="text" name="name" id="name" value="{{ candy.name }}" class="border border-gray-300 p-2 w-full rounded-lg">
+        </div>
+
+        <!-- Field untuk Price dengan value default -->
+        <div>
+            <label for="price" class="block text-sm font-medium text-pink-600 mb-1">Price:</label>
+            <input type="number" name="price" id="price" value="{{ candy.price }}" class="border border-gray-300 p-2 w-full rounded-lg">
+        </div>
+
+        <!-- Field untuk Sweetness dengan value default -->
+        <div>
+            <label for="sweetness" class="block text-sm font-medium text-pink-600 mb-1">Sweetness:</label>
+            <input type="number" name="sweetness" id="sweetness" value="{{ candy.sweetness }}" class="border border-gray-300 p-2 w-full rounded-lg">
+        </div>
+
+        <!-- Field untuk Description dengan value default -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-pink-600 mb-1">Description:</label>
+            <textarea name="description" id="description" class="border border-gray-300 p-2 w-full rounded-lg">{{ candy.description }}</textarea>
+        </div>
+
+        <div class="flex justify-center">
+            <input type="submit" value="Edit Candy" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg cursor-pointer">
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

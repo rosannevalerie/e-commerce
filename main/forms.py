@@ -4,4 +4,4 @@ from main.models import Candy
 class CandyEntryForm(ModelForm):
     class Meta:
         model = Candy
-        fields = ["name", "price", "sweetness", "description"]
+        fields = ["name", "price", "sweetness", "description"]  
