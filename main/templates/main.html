@@ -9,40 +9,183 @@
 {% include 'navbar.html' %}
 
 <div class="overflow-x-hidden px-4 md:px-8 py-8 min-h-screen bg-pink-50 flex flex-col">
-  
+
   <div class="content mt-20">
-    <div class="p-2 mb-6 relative">
-      <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
-        {% include "card_info.html" with title='NPM' value=npm %}
-        {% include "card_info.html" with title='Name' value=nama %}
-        {% include "card_info.html" with title='Class' value=class %}
+  <h1 class="text-3xl text-center text-pink-500 font-extrabold mb-4">Satisfy Your Sweet Tooth, Indulge in Bliss!</h1>
+  </div>
+  <span class="text-2xl text-center text-pink-500 mr-4">Welcome, {{ user.username }}!</span>
+  <div class="content mt-10"></div>
+
+  <div id="candy_entry_cards"></div>
+
+  <div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+    <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+      <!-- Modal header -->
+      <div class="flex items-center justify-between p-4 border-b rounded-t">
+        <h3 class="text-xl font-semibold text-gray-900">
+          Add New Candy Entry
+        </h3>
+        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+          <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <!-- Modal body -->
+      <div class="px-6 py-4 space-y-6 form-style">
+        <form id="candyEntryForm">
+          <div class="mb-4">
+            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter candy name" required>
+          </div>
+          <div class="mb-4">
+            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+            <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter candy price"required>
+          </div>
+          <div class="mb-4">
+            <label for="sweetness" class="block text-sm font-medium text-gray-700">Sweetness (1-10)</label>
+            <input type="number" id="sweetness" name="sweetness" min="1" max="10" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter sweetness level" required>
+          </div>
+          <div class="mb-4">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter Candy description" required></textarea>
+          </div>
+        </form>
+      </div>
+      <!-- Modal footer -->
+      <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+        <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+        <button type="submit" id="submitCandyEntry" form="candyEntryForm" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
       </div>
     </div>
   </div>
-
-  <h1 class="text-3xl text-center text-pink-700 font-extrabold mb-4">Satisfy Your Sweet Tooth, Indulge in Bliss!</h1>
-
-  {% if not candies %}
-    <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLkmuBsz-n5XtJd3sUDjDO-2QbKWRxBdn1iw&s" alt="Sad face" class="w-32 h-32 mb-4"/>
-        <p class="text-center text-gray-600 mt-4">Belum ada permen.</p>
-    </div>
-  {% else %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {% for candy in candies %}
-            {% include 'card_candy.html' with candy_entry=candy %}
-        {% endfor %}
-    </div>
-  {% endif %}
   
   <div class="text-center mt-10">
       <a href="{% url 'main:create_candy_entry' %}" class="bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300">
           Add New Candy Entry
       </a>
+      <br>
+      <button data-modal-target="crudModal" data-modal-toggle="crudModal" class="bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 mt-7" onclick="showModal();">
+        Add New Mood Entry by AJAX
+      </button>
   </div>
 
   <br>
-  <p class="text-center text-sm text-gray-500 mt-6">Last Login: {{ last_login }}</p>
+  <p class="text-center text-sm text-gray-500 mt-4 mb-4">Last Login: {{ last_login }}</p>
+  
+  <div class="p-2 mb-6 relative">
+    <div class="relative grid grid-cols-1 z-30 md:grid-cols-3 gap-8">
+      {% include "card_info.html" with title='NPM' value=npm %}
+      {% include "card_info.html" with title='Name' value=nama %}
+      {% include "card_info.html" with title='Class' value=class %}
+    </div>
+  </div>
+
 </div>
+
+<script>
+  async function getCandyEntries(){
+      return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+  }
+
+  async function refreshCandyEntries() {
+    document.getElementById("candy_entry_cards").innerHTML = "";
+    document.getElementById("candy_entry_cards").className = "";
+    const candyEntries = await getCandyEntries();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (candyEntries.length === 0) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLkmuBsz-n5XtJd3sUDjDO-2QbKWRxBdn1iw&s" alt="Sad face" class="w-32 h-32 mb-4"/>
+                <p class="text-center text-gray-600 mt-4">Belum ada permen.</p>
+            </div>
+        `;
+    }
+    else {
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+        candyEntries.forEach((item) => {
+        htmlString += `
+          <div class="bg-white shadow-xl rounded-lg overflow-hidden transform transition hover:scale-105 duration-300">
+          <img src="https://www.bomboyscandy.com/wp-content/uploads/2019/09/imported_gummie_bears.jpg" alt="${item.fields.name}" class="w-full h-48 object-cover">
+          <div class="p-4">
+              <h3 class="font-extrabold text-lg text-pink-600">${item.fields.name}</h3>
+              <p class="font-medium text-pink-600 mb-2">${item.fields.description}</p>
+              <p class="text-green-600 font-bold text-lg mb-3">$${item.fields.price}</p>
+              <div class="mt-3 flex justify-between items-center">
+                  <span class="text-base font-medium text-yellow-500">Sweetness: ${item.fields.sweetness}</span>
+                  <div class="flex items-center space-x-2">
+                      <a href="/edit-candy/${item.pk}" class="text-blue-500 hover:text-blue-600">
+                          <img src="https://www.svgrepo.com/show/42233/pencil-edit-button.svg" alt="Edit" class="h-5 w-5">
+                      </a>
+                      <a href="/delete/${item.pk}" class="text-red-500 hover:text-red-600">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+        `;
+    });
+
+    }
+    document.getElementById("candy_entry_cards").className = classNameString;
+    document.getElementById("candy_entry_cards").innerHTML = htmlString;
+}
+refreshCandyEntries();
+
+const modal = document.getElementById('crudModal');
+  const modalContent = document.getElementById('crudModalContent');
+
+  function showModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modal.classList.remove('hidden'); 
+      setTimeout(() => {
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+      }, 50); 
+  }
+
+  function hideModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modalContent.classList.remove('opacity-100', 'scale-100');
+      modalContent.classList.add('opacity-0', 'scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 150); 
+  }
+
+  document.getElementById("cancelButton").addEventListener("click", hideModal);
+  document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+
+  function addCandyEntry() {
+    fetch("{% url 'main:add_candy_entry_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#candyEntryForm')),
+    })
+    .then(response => refreshCandyEntries())
+
+    document.getElementById("candyEntryForm").reset(); 
+    document.querySelector("[data-modal-toggle='crudModal']").click();
+
+    return false;
+  }
+
+  document.getElementById("candyEntryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addCandyEntry();
+  })
+
+</script>
 
 {% endblock content %}

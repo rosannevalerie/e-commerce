@@ -9,7 +9,6 @@
               <span class="text-white font-semibold hover:text-gray-200 cursor-pointer">Shop</span>
               <span class="text-white font-semibold hover:text-gray-200 cursor-pointer">Contact Us</span>
               {% if user.is_authenticated %}
-              <span class="text-gray-300 mr-4">Welcome, {{ user.username }}</span>
               <a href="{% url 'main:logout' %}" class="text-center bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300">
                   Logout
               </a>

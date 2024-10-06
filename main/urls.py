@@ -1,7 +1,8 @@
 from django.urls import path
 from main.views import \
     show_main, create_candy_entry, show_xml, show_json, show_xml_by_id, \
-    show_json_by_id, register,login_user, logout_user, edit_candy, delete_candy
+    show_json_by_id, register,login_user, logout_user, edit_candy, delete_candy, \
+    add_candy_entry_ajax
 
 app_name = 'main'
 
@@ -17,4 +18,5 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
     path('edit-candy/<uuid:id>', edit_candy, name='edit_candy'),
     path('delete/<uuid:id>', delete_candy, name='delete_candy'),
+    path('create-mood-entry-ajax', add_candy_entry_ajax, name='add_candy_entry_ajax'),
 ]

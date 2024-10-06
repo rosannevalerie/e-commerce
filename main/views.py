@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.shortcuts import render, redirect, reverse
 from main.forms import CandyEntryForm
@@ -10,21 +11,23 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import datetime
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 @login_required(login_url='/login')
 def show_main(request):
-    candy_entries = Candy.objects.filter(user=request.user)
+    # candy_entries = Candy.objects.filter(user=request.user)
 
-    new_candy = []
-    for candy in candy_entries:
-        new_candy.append({'name': candy.name, 'price': candy.price, 'description': candy.description, 'sweetness': candy.sweetness, 'id': candy.id})
-    all_candies = new_candy
+    # new_candy = []
+    # for candy in candy_entries:
+    #     new_candy.append({'name': candy.name, 'price': candy.price, 'description': candy.description, 'sweetness': candy.sweetness, 'id': candy.id})
+    # all_candies = new_candy
     
     context = {
         'nama': "Rosanne Valerie",
         'npm': "2306222986",
         'class': "PBP E",
-        'candies': all_candies,
+        # 'candies': all_candies,
         'last_login': request.COOKIES.get('last_login'), 
         'user_name': request.user.username
     }
@@ -45,11 +48,11 @@ def create_candy_entry(request):
     return render(request, "create_candy_entry.html", context)
 
 def show_xml(request):
-    data = Candy.objects.all()
+    data = Candy.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
-    data = Candy.objects.all()
+    data = Candy.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -125,3 +128,23 @@ def delete_candy(request, id):
     candy = Candy.objects.get(pk = id)
     candy.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+@csrf_exempt
+@require_POST
+def add_candy_entry_ajax(request):
+    name = request.POST.get('name')
+    price = request.POST.get('price')
+    sweetness = request.POST.get('sweetness')
+    description = request.POST.get('description')
+    user = request.user
+
+
+    new_candy = Candy(
+        name=name, price=price,
+        sweetness=sweetness,
+        description=description, 
+        user=user
+    )
+    new_candy.save()
+
+    return HttpResponse(b"CREATED", status=201)
