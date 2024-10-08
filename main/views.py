@@ -13,6 +13,7 @@ import datetime
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -79,7 +80,7 @@ def login_user(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
 
-        if form.is_valid():
+        if form.is_valid() and request.method == 'POST':
             user = form.get_user()
             login(request, user)
             response = redirect('main:show_main')
@@ -94,8 +95,6 @@ def login_user(request):
     context = {'form': form}
     return render(request, 'login.html', context)
 
-
-
 def logout_user(request):
     logout(request)
     response = HttpResponseRedirect(reverse('main:login'))
@@ -103,24 +102,14 @@ def logout_user(request):
     return response
 
 def edit_candy(request, id):
-    try:
-        candy = Candy.objects.get(id=id) 
-    except Candy.DoesNotExist:
-        return HttpResponse("Candy not found", status=404)  
-
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        price = request.POST.get('price')
-        sweetness = request.POST.get('sweetness')
-        description = request.POST.get('description')
-
-        candy.name = name
-        candy.price = price
-        candy.sweetness = sweetness
-        candy.description = description
-        candy.save()
-
-        return redirect('main:show_main')
+    candy = Candy.objects.get(pk=id)
+    if request.method == "POST":
+        form = CandyEntryForm(request.POST, instance=candy)
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main')
+    else:
+        form = CandyEntryForm(instance=candy)
 
     return render(request, 'edit_candy.html', {'candy': candy})
 
@@ -132,12 +121,11 @@ def delete_candy(request, id):
 @csrf_exempt
 @require_POST
 def add_candy_entry_ajax(request):
-    name = request.POST.get('name')
+    name = strip_tags(request.POST.get('name'))
     price = request.POST.get('price')
     sweetness = request.POST.get('sweetness')
-    description = request.POST.get('description')
+    description = strip_tags(request.POST.get('description'))
     user = request.user
-
 
     new_candy = Candy(
         name=name, price=price,

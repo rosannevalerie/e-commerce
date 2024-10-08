@@ -140,7 +140,7 @@
 refreshCandyEntries();
 
 const modal = document.getElementById('crudModal');
-  const modalContent = document.getElementById('crudModalContent');
+const modalContent = document.getElementById('crudModalContent');
 
   function showModal() {
       const modal = document.getElementById('crudModal');
@@ -183,6 +183,15 @@ const modal = document.getElementById('crudModal');
 
   document.getElementById("candyEntryForm").addEventListener("submit", (e) => {
     e.preventDefault();
+    
+    let name = document.getElementById("name").value;
+    let description = document.getElementById("description").value;
+
+    if (name.includes('<') || description.includes('<')) {
+        alert('Invalid input, HTML tags are not allowed.');
+        return false;
+    }
+
     addCandyEntry();
   })
 
