@@ -14,21 +14,16 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 @login_required(login_url='/login')
 def show_main(request):
-    # candy_entries = Candy.objects.filter(user=request.user)
 
-    # new_candy = []
-    # for candy in candy_entries:
-    #     new_candy.append({'name': candy.name, 'price': candy.price, 'description': candy.description, 'sweetness': candy.sweetness, 'id': candy.id})
-    # all_candies = new_candy
-    
     context = {
         'nama': "Rosanne Valerie",
         'npm': "2306222986",
         'class': "PBP E",
-        # 'candies': all_candies,
         'last_login': request.COOKIES.get('last_login'), 
         'user_name': request.user.username
     }
@@ -136,3 +131,21 @@ def add_candy_entry_ajax(request):
     new_candy.save()
 
     return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+def create_candy_flutter(request):
+    if request.method == 'POST':
+
+        data = json.loads(request.body)
+        new_candy = Candy.objects.create(
+            user=request.user,
+            name=data["name"],
+            price=int(data["price"]),
+            description=data["description"],
+            sweetness=int(data["sweetness"]),
+        )
+
+        new_candy.save()
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
